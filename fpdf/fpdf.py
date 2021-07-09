@@ -280,6 +280,7 @@ class FPDF:
         self.k = get_scale_factor(unit)
 
         self.dw_pt, self.dh_pt = get_page_format(format, self.k)
+        self.w_pt, self.h_pt = self.dw_pt, self.dh_pt
         self._set_orientation(orientation, self.dw_pt, self.dh_pt)
         self.def_orientation = self.cur_orientation
         self.font_size = self.font_size_pt / self.k
@@ -287,16 +288,30 @@ class FPDF:
         # Page spacing
         # Page margins (1 cm)
         margin = (7200 / 254) / self.k
-        self.x, self.y, self.l_margin, self.t_margin = 0, 0, 0, 0
-        self.set_margins(margin, margin)
+        self.l_margin = margin
+        self.t_margin = margin
+        self.r_margin = margin
+        self.b_margin = margin * 2
         self.x, self.y = self.l_margin, self.t_margin
         self.c_margin = margin / 10.0  # Interior cell margin (1 mm)
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
-        # sets self.auto_page_break, self.b_margin & self.page_break_trigger:
-        self.set_auto_page_break(True, 2 * margin)
-        self.set_display_mode("fullwidth")  # Full width display mode
+
+        self.auto_page_break = True
+        self.page_break_trigger = self.h - self.b_margin
+        self.zoom_mode = "fullwidth"  # Full width display mode
+        self.layout_mode = "continuous"
         self.compress = True  # Enable compression by default
         self.pdf_version = "1.3"  # Set default PDF version No.
+
+        # Optional Elements
+        self.title = None
+        self.subject = None
+        self.author = None
+        self.keywords = None
+        self.creator = None
+        self.producer = None
+        self.lang = None
+        self.creation_date = None
 
     @property
     def unifontsubset(self):
@@ -306,6 +321,7 @@ class FPDF:
     def epw(self):
         """
         Effective page width: the page width minus its horizontal margins.
+        Returned in the unit specified to FPDF constructor.
         """
         return self.w - self.l_margin - self.r_margin
 
@@ -313,6 +329,7 @@ class FPDF:
     def eph(self):
         """
         Effective page height: the page height minus its vertical margins.
+        Returned in the unit specified to FPDF constructor.
         """
         return self.h - self.t_margin - self.b_margin
 
@@ -2970,17 +2987,17 @@ class FPDF:
 
     def _putinfo(self):
         info_d = {
-            "/Title": enclose_in_parens(getattr(self, "title", None)),
-            "/Subject": enclose_in_parens(getattr(self, "subject", None)),
-            "/Author": enclose_in_parens(getattr(self, "author", None)),
-            "/Keywords": enclose_in_parens(getattr(self, "keywords", None)),
-            "/Creator": enclose_in_parens(getattr(self, "creator", None)),
-            "/Producer": enclose_in_parens(getattr(self, "producer", None)),
+            "/Title": enclose_in_parens(self.title),
+            "/Subject": enclose_in_parens(self.subject),
+            "/Author": enclose_in_parens(self.author),
+            "/Keywords": enclose_in_parens(self.keywords),
+            "/Creator": enclose_in_parens(self.creator),
+            "/Producer": enclose_in_parens(self.producer),
         }
 
-        if hasattr(self, "creation_date"):
+        if self.creation_date is not None:
+            creation_date = self.creation_date
             try:
-                creation_date = self.creation_date
                 date_string = f"{creation_date:%Y%m%d%H%M%S}"
             except Exception as error:
                 raise FPDFException(
