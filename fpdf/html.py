@@ -245,7 +245,7 @@ class HTML2FPDF(HTMLParser):
     def width2unit(self, length):
         "Handle conversion of % measures into the measurement unit used"
         if length[-1] == "%":
-            total = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
+            total = self.pdf.epw
             if self.table["width"][-1] == "%":
                 total *= int(self.table["width"][:-1]) / 100
             return int(length[:-1]) * total / 100
@@ -460,7 +460,7 @@ class HTML2FPDF(HTMLParser):
             if "width" not in self.table:
                 self.table["width"] = "100%"
             if self.table["width"][-1] == "%":
-                w = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
+                w = self.pdf.epw
                 w *= int(self.table["width"][:-1]) / 100
                 self.table_offset = (self.pdf.w - w) / 2
             self.table_col_width = []
