@@ -94,10 +94,10 @@ class DocumentState(IntEnum):
 
 class Annotation(NamedTuple):
     type: str
-    x: int
-    y: int
-    width: int
-    height: int
+    x: float
+    y: float
+    width: float
+    height: float
     contents: str = None
     link: Union[str, int] = None
     alt_text: Optional[str] = None
@@ -196,7 +196,7 @@ class FPDF:
         Args:
             orientation (str): possible values are "portrait" (can be abbreviated "P")
                 or "landscape" (can be abbreviated "L"). Default to "portrait".
-            unit (str, int, float): possible values are "pt", "mm", "cm", "in", or a number.
+            unit (str, float): possible values are "pt", "mm", "cm", "in", or a number.
                 A point equals 1/72 of an inch, that is to say about 0.35 mm (an inch being 2.54 cm).
                 This is a very common unit in typography; font sizes are expressed in this unit.
                 If given a number, then it will be treated as the number of points per unit.  (eg. 72 = 1 in)
@@ -321,21 +321,21 @@ class FPDF:
         Sets the document right, left, top & bottom margins to the same value.
 
         Args:
-            margin (int): margin in the unit specified to FPDF constructor
+            margin (int, float): margin in the unit specified to FPDF constructor
         """
         self.set_margins(margin, margin)
         self.set_auto_page_break(self.auto_page_break, margin)
 
     def set_margins(self, left, top, right=-1):
         """
-        Sets the document left, top & optionaly right margins to the same value.
+        Sets the document left, top & optionally right margins to the same value.
         By default, they equal 1 cm.
         Also sets the current FPDF.y on the page to this minimum vertical position.
 
         Args:
-            left (int): left margin in the unit specified to FPDF constructor
-            top (int): top margin in the unit specified to FPDF constructor
-            right (int): optional right margin in the unit specified to FPDF constructor
+            left (float): left margin in the unit specified to FPDF constructor
+            top (float): top margin in the unit specified to FPDF constructor
+            right (float): optional right margin in the unit specified to FPDF constructor
         """
         self.set_left_margin(left)
         if self.y < top or self.y == self.t_margin:
@@ -351,7 +351,7 @@ class FPDF:
         Also sets the current FPDF.x on the page to this minimum horizontal position.
 
         Args:
-            margin (int): margin in the unit specified to FPDF constructor
+            margin (float): margin in the unit specified to FPDF constructor
         """
         if self.x < margin or self.x == self.l_margin:
             self.x = margin
@@ -362,7 +362,7 @@ class FPDF:
         Sets the document top margin.
 
         Args:
-            margin (int): margin in the unit specified to FPDF constructor
+            margin (float): margin in the unit specified to FPDF constructor
         """
         self.t_margin = margin
 
@@ -371,7 +371,7 @@ class FPDF:
         Sets the document right margin.
 
         Args:
-            margin (int): margin in the unit specified to FPDF constructor
+            margin (float): margin in the unit specified to FPDF constructor
         """
         self.r_margin = margin
 
@@ -382,7 +382,7 @@ class FPDF:
 
         Args:
             auto (bool): enable or disable this mode
-            margin (int): optional bottom margin (distance from the bottom of the page)
+            margin (int, float): optional bottom margin (distance from the bottom of the page)
                 in the unit specified to FPDF constructor
         """
         self.auto_page_break = auto
@@ -1294,9 +1294,9 @@ class FPDF:
 
         Args:
             link (int): a link identifier returned by `add_link`.
-            y (int): optional ordinate of target position.
+            y (float): optional ordinate of target position.
                 The default value is 0 (top of page).
-            x (int): optional abscissa of target position.
+            x (float): optional abscissa of target position.
                 The default value is 0 (top of page).
             page (int): optional number of target page.
                 -1 indicates the current page, which is the default value.
@@ -1316,10 +1316,10 @@ class FPDF:
         but this method can be useful for instance to define a clickable area inside an image.
 
         Args:
-            x (int): horizontal position (from the left) to the left side of the link rectangle
-            y (int): vertical position (from the top) to the bottom side of the link rectangle
-            w (int): width of the link rectangle
-            h (int): width of the link rectangle
+            x (float): horizontal position (from the left) to the left side of the link rectangle
+            y (float): vertical position (from the top) to the bottom side of the link rectangle
+            w (float): width of the link rectangle
+            h (float): width of the link rectangle
             link: either an URL or a integer returned by `add_link`, defining an internal link to a page
             alt_text (str): optional textual description of the link, for accessibility purposes
         """
@@ -1341,10 +1341,10 @@ class FPDF:
         Puts a text annotation on a rectangular area of the page.
 
         Args:
-            x (int): horizontal position (from the left) to the left side of the link rectangle
-            y (int): vertical position (from the top) to the bottom side of the link rectangle
-            w (int): width of the link rectangle
-            h (int): width of the link rectangle
+            x (float): horizontal position (from the left) to the left side of the link rectangle
+            y (float): vertical position (from the top) to the bottom side of the link rectangle
+            w (float): width of the link rectangle
+            h (float): width of the link rectangle
             text (str): text to display
         """
         self.annots[self.page].append(
@@ -1365,10 +1365,10 @@ class FPDF:
 
         Args:
             action (fpdf.actions.Action): the action to add
-            x (int): horizontal position (from the left) to the left side of the link rectangle
-            y (int): vertical position (from the top) to the bottom side of the link rectangle
-            w (int): width of the link rectangle
-            h (int): width of the link rectangle
+            x (float): horizontal position (from the left) to the left side of the link rectangle
+            y (float): vertical position (from the top) to the bottom side of the link rectangle
+            w (float): width of the link rectangle
+            h (float): width of the link rectangle
         """
         self.annots[self.page].append(
             Annotation(
@@ -1389,8 +1389,8 @@ class FPDF:
         but it is usually easier to use the `cell()`, `multi_cell() or `write()` methods.
 
         Args:
-            x (int): abscissa of the origin
-            y (int): ordinate of the origin
+            x (float): abscissa of the origin
+            y (float): ordinate of the origin
             txt (str): string to print
         """
         if not self.font_family:
@@ -1510,9 +1510,9 @@ class FPDF:
         page break is performed before outputting.
 
         Args:
-            w (int): Cell width. Default value: None, meaning to fit text width.
+            w (float): Cell width. Default value: None, meaning to fit text width.
                 If 0, the cell extends up to the right margin.
-            h (int): Cell height. Default value: None, meaning an height equal
+            h (float): Cell height. Default value: None, meaning an height equal
                 to the current font size.
             txt (str): String to print. Default value: empty string.
             border: Indicates if borders must be drawn around the cell.
@@ -1827,8 +1827,8 @@ class FPDF:
         the background painted.
 
         Args:
-            w (int): cell width. If 0, they extend up to the right margin of the page.
-            h (int): cell height. Default value: None, meaning to use the current font size.
+            w (float): cell width. If 0, they extend up to the right margin of the page.
+            h (float): cell height. Default value: None, meaning to use the current font size.
             txt (str): strign to print.
             border: Indicates if borders must be drawn around the cell.
                 The value can be either a number (`0`: no border ; `1`: frame)
@@ -2063,7 +2063,7 @@ class FPDF:
         Upon method exit, the current position is left just at the end of the text.
 
         Args:
-            h (int): line height. Default value: None, meaning to use the current font size.
+            h (float): line height. Default value: None, meaning to use the current font size.
             txt (str): text content
             link (str): optional link to add on the text, internal
                 (identifier returned by `add_link`) or external URL.
@@ -2166,15 +2166,15 @@ class FPDF:
         Args:
             name: either a string representing a file path to an image, an URL to an image,
                 an io.BytesIO, or a instance of `PIL.Image.Image`
-            x (int): optional horizontal position where to put the image on the page.
+            x (float): optional horizontal position where to put the image on the page.
                 If not specified or equal to None, the current abscissa is used.
-            y (int): optional vertical position where to put the image on the page.
+            y (float): optional vertical position where to put the image on the page.
                 If not specified or equal to None, the current ordinate is used.
                 After the call, the current ordinate is moved to the bottom of the image
-            w (int): optional width of the image. If not specified or equal to zero,
+            w (float): optional width of the image. If not specified or equal to zero,
                 it is automatically calculated from the image size.
                 Pass `pdf.epw` to scale horizontally to the full page width.
-            h (int): optional height of the image. If not specified or equal to zero,
+            h (float): optional height of the image. If not specified or equal to zero,
                 it is automatically calculated from the image size.
                 Pass `pdf.eph` to scale horizontally to the full page height.
             type (str): [**DEPRECATED**] unused, will be removed in a later version.
@@ -2269,7 +2269,7 @@ class FPDF:
         the amount passed as parameter.
 
         Args:
-            h (int): The height of the break.
+            h (float): The height of the break.
                 By default, the value equals the height of the last printed cell.
         """
         self.x = self.l_margin
@@ -2310,8 +2310,8 @@ class FPDF:
         If the values provided are negative, they are relative respectively to the right and bottom of the page.
 
         Args:
-            x (int): the new current abscissa
-            y (int): the new current ordinate
+            x (float): the new current abscissa
+            y (float): the new current ordinate
         """
         self.set_y(y)
         self.set_x(x)
