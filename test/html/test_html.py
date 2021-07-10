@@ -4,7 +4,7 @@ import pytest
 
 import fpdf
 from fpdf.errors import FPDFException
-from fpdf.html import px2mm
+from fpdf.util import convert_unit
 from test.conftest import assert_pdf_equal
 
 
@@ -20,7 +20,7 @@ def test_html_images(tmp_path):
     pdf.add_page()
 
     initial = 10
-    mm_after_image = initial + px2mm(300)
+    mm_after_image = initial + convert_unit(300, "pt", "mm")
     assert round(pdf.get_x()) == 10
     assert round(pdf.get_y()) == 10
     assert round(pdf.w) == 210

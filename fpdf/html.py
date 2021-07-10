@@ -8,7 +8,10 @@ __license__ = "LGPL 3.0"
 
 import html
 import logging
+import warnings
 from html.parser import HTMLParser
+
+from fpdf.util import convert_unit
 
 LOGGER = logging.getLogger(__name__)
 BULLET_WIN1252 = "\x95"  # BULLET character in Windows-1252 encoding
@@ -166,7 +169,13 @@ COLOR_DICT = {
 
 
 def px2mm(px):
-    return int(px) * 25.4 / 72
+    """
+    Convert from points to mm
+
+    .. deprecated:: Use `util.convert_unit` instead.
+    """
+    warnings.warn("deprecated, use util.convert_unit instead", DeprecationWarning)
+    return convert_unit(px, "pt", "mm")
 
 
 def color_as_decimal(color="#000000"):
@@ -502,8 +511,8 @@ class HTML2FPDF(HTMLParser):
         if tag == "tfoot":
             self.tfoot = {}
         if tag == "img" and "src" in attrs:
-            width = px2mm(attrs.get("width", 0))
-            height = px2mm(attrs.get("height", 0))
+            width = convert_unit(attrs.get("width", 0), "pt", "mm")
+            height = convert_unit(attrs.get("height", 0), "pt", "mm")
             if self.pdf.y + height > self.pdf.page_break_trigger:
                 self.pdf.add_page(same=True)
             y = self.pdf.get_y()
@@ -626,7 +635,7 @@ class HTML2FPDF(HTMLParser):
             self.font_face = face
         if size:
             self.font_size = size
-            self.h = size / 72 * 25.4
+            self.h = convert_unit(size, "pt", "mm")
             LOGGER.debug("H %s", self.h)
         style = "".join(s for s in ("b", "i", "u") if self.style.get(s)).upper()
         if (self.font_face, style) != (self.pdf.font_family, self.pdf.font_style):
