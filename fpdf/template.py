@@ -50,6 +50,9 @@ class Template:
             "C39": self.code39,
             "W": self.write,
         }
+        self.pg_no = 0
+        self.elements = []
+        self.keys = []
         self.texts = {}
         pdf = self.pdf = FPDF(format=format, orientation=orientation, unit="mm")
         pdf.set_title(title)

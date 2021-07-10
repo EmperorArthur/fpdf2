@@ -182,3 +182,20 @@ def test_template_qrcode(tmp_path):  # issue-175
     tmpl["barcode_0"] = qrcode.make("Test 0").get_image()
     tmpl["barcode_1"] = qrcode.make("Test 1").get_image()
     assert_pdf_equal(tmpl, HERE / "template_qrcode.pdf", tmp_path)
+
+
+def test_template_empty_page(tmp_path):
+    tmpl = Template()
+    tmpl.add_page()
+    assert_pdf_equal(tmpl, HERE / "template_empty.pdf", tmp_path, generate=True)
+
+
+def test_template_no_page(tmp_path):
+    tmpl = Template()
+    assert_pdf_equal(tmpl, HERE / "template_no_page.pdf", tmp_path)
+
+
+def test_template_check_element_new():
+    tmpl = Template()
+    result = "TEST_element" in tmpl
+    assert result is False, "An empty Template should not have any elements"
