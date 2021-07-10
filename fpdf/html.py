@@ -232,15 +232,19 @@ class HTML2FPDF(HTMLParser):
         self.indent = 0
         self.bullet = []
         self.font_size = pdf.font_size_pt
-        self.set_font(pdf.font_family or "times", size=self.font_size)
+        self.h = convert_unit(self.font_size, "pt", "mm")
+        self.font_face = pdf.font_family or "times"
+        self.set_font()  # Make sure to sync self.pdf to self.font_face and self.font_size
         self.font_color = 0, 0, 0  # initialize font color, r,g,b format
         self.table = None  # table attributes
+        self.table_offset = self.pdf.l_margin
         self.table_col_width = None  # column (header) widths
         self.table_col_index = None  # current column index
         self.td = None  # inside a <td>, attributes dict
         self.th = None  # inside a <th>, attributes dict
         self.tr = None  # inside a <tr>, attributes dict
         self.thead = None  # inside a <thead>, attributes dict
+        self.tbody = None
         self.tfoot = None  # inside a <tfoot>, attributes dict
         self.tr_index = None  # row index
         self.theader = None  # table header cells
@@ -477,6 +481,7 @@ class HTML2FPDF(HTMLParser):
             self.theader = []
             self.tfooter = []
             self.thead = None
+            self.tbody = None
             self.tfoot = None
             self.pdf.ln()
         if tag == "tr":

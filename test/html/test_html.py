@@ -428,3 +428,15 @@ def test_html_font_color_name(tmp_path):
         '<font color="beige"><p><i>italic hello in beige</i></p></font>'
     )
     assert_pdf_equal(pdf, HERE / "html_font_color_name.pdf", tmp_path)
+
+
+def test_html_empty(tmp_path):
+    pdf = MyFPDF()
+    assert_pdf_equal(pdf, HERE / "html_empty.pdf", tmp_path)
+
+
+def test_html_table_fixed_width(tmp_path):
+    pdf = MyFPDF()
+    pdf.add_page()
+    pdf.write_html('<table width="50">' '<tr><td width="50">TEST</td></tr>' "</table>")
+    assert_pdf_equal(pdf, HERE / "html_table_fixed_width.pdf", tmp_path)
