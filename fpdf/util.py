@@ -1,4 +1,5 @@
 import locale
+import warnings
 from typing import Union, Iterable
 
 
@@ -85,6 +86,9 @@ def convert_unit(
         (float, tuple): to_convert converted from old_unit to new_unit or a tuple of the same
     """
     unit_conversion_factor = get_scale_factor(new_unit) / get_scale_factor(old_unit)
+    if isinstance(to_convert, str):
+        warnings.warn("convert_unit received a string instead of a number")
+        to_convert = float(to_convert)
     if isinstance(to_convert, Iterable):
         return tuple(
             map(lambda i: convert_unit(i, 1, unit_conversion_factor), to_convert)

@@ -1,5 +1,7 @@
 import math
 
+import pytest
+
 from fpdf.util import convert_unit
 
 
@@ -71,3 +73,15 @@ def test_convert_unit_crazy():
         ((25.399999999999995, 25.399999999999995), (215.89999999999998, 279.4)),
         ((50.79999999999999, 50.79999999999999), (279.4, 215.89999999999998)),
     )
+
+
+def test_convert_unit_to_convert_string_warns():
+    """
+    Test converting units where a string is given as the first argument.
+
+    This seems silly, but without a check causes an infinite recursion.
+    Also, `fpdf.html.px2mm` performs an implicit conversion, so someone moving from that would find a nasty surprise.
+    """
+    with pytest.warns(UserWarning):
+        converted = convert_unit("1", "in", "mm")
+    assert math.isclose(converted, 25.4), "1 inch should equal 25.4 mm at 72dpi"
