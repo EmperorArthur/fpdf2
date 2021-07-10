@@ -15,6 +15,9 @@
 # modification of the file.
 #
 # ******************************************************************************
+# pylint: disable=attribute-defined-outside-init
+# Fixme: This file should not define attributes outside of init
+
 
 import re
 import warnings
